@@ -13,3 +13,17 @@ export const WINNER_COMBOS = [
     [0, 4, 8],
     [2, 4, 6]
 ]
+
+export const Square = ({children, isSelected, updateBoard, index}) => {
+    const className = `square ${isSelected ? 'is-selected' : ''}`
+
+
+    const handleClick = () => {
+        updateBoard(index)
+    }
+    return (
+        <div onClick={handleClick} className={className}>
+            {children}
+        </div>
+    )
+}

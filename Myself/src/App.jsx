@@ -2,29 +2,25 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { Square } from './Objects'
-import { TURNS, WINNER_COMBOS } from './Constants'
+import { TURNS, WINNER_COMBOS, Square } from './Constants'
+import { checkWinner } from './Functions'
+import confetti from 'canvas-confetti'
 
 function App() {
-  const [board, setBoard] = useState(Array(9).fill(null)) //<-- Estado inicial
-  const [turn, setTurn] = useState(TURNS.X) 
+
+  const [board, setBoard] = useState(() => {
+    const boardFromStorage = window.localStorage.getItem('board')
+    if (boardFromStorage) 
+      return JSON.parse(boardFromStorage)
+    return Array(9).fill(null)
+  })
+
+  const [turn, setTurn] = useState(() => {
+    const turnFromStorage = window.localStorage.getItem('turm')
+    return turnFromStorage ?? TURNS.X
+  })
   const [winner, setWinner] = useState(null) // Null = No hay ganador, False = empate.
 
-  const checkWinner = (boardToCheck) => {
-    for (const combo of WINNER_COMBOS) {
-      const [a, b, c] = combo
-      if (
-        boardToCheck[a] && 
-        boardToCheck[a] === boardToCheck[b] &&
-        boardToCheck[a] === boardToCheck[c]
-      )
-      {
-        return boardToCheck[a]
-      }
-    }
-    // No hay gannador
-    return null
-  }
   const checkEndGame = (boardToCheck) => {
     return boardToCheck.every((square) => square !== null);
   }
@@ -40,9 +36,14 @@ function App() {
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
 
+    // Guardar la partida
+    window.localStorage.setItem('board', JSON.stringify(newBoard))
+    window.localStorage.setItem('turn', newTurn)
+
     // Comprobar si hay un ganador
     const newWinner = checkWinner(newBoard)
     if (newWinner) {
+      confetti()
       setWinner(newWinner)
     } else if (checkEndGame(newBoard)) {
       setWinner(false)
@@ -53,6 +54,9 @@ function App() {
     setBoard(Array(9).fill(null))
     setTurn(TURNS.X)
     setWinner(null)
+
+    window.localStorage.removeItem('board')
+    window.localStorage.removeItem('turn')
   }
 
   return (
