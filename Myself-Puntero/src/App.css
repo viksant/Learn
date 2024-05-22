@@ -1,0 +1,28 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.botonActivarCursor {
+  border-radius: 10px;
+  cursor: pointer;
+  color: rgb(237, 237, 237);
+  font-size: 20px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.bolitaRaton {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  pointer-events: none;
+  left: -20px;
+  top: -20px;
+  width: 40px;
+  height: 40px;
+  transform: translate(0px, 0px);
+}
