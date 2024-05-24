@@ -5,3 +5,9 @@
   text-align: center;
 }
 
+.gatos {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

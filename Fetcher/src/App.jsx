@@ -1,37 +1,46 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { getRandomFact } from './facts'
+
+const API_FACT_URL = 'https://cataas.com/cat/says/'
+
+function useCatImage ( {fact} ) {
+  const [image, setImage] = useState()
+  useEffect(() => {
+
+    if (!fact) return
+    // Get the first word of the fact
+    const firstWord = fact.split(' ')[0];
+    // Get the image
+    fetch(`${API_FACT_URL}${firstWord}`)
+      .then(imageResponse => imageResponse.blob())
+      .then(imageResponse => {
+        const url = URL.createObjectURL(imageResponse)
+        setImage(url);
+      })
+  }, [fact])
+  return {image}
+}
 
 function App() {
-  const API_URL = 'https://catfact.ninja/fact'
-  const API_FACT_URL = 'https://cataas.com/cat/says/'
-
-
+  
   const [fact, setFact] = useState('')
-  const [image, setImage] = useState('')
-
+  
   useEffect(() => {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => {
-        const fact = data.fact
-
-        // Get the first word of the fact
-        const firstWord = fact.split(' ')[0];
-        
-        // Get the image
-        fetch(`${API_FACT_URL}${firstWord}`)
-          .then(imageResponse => imageResponse.blob())
-          .then(imageBlob => {
-            const imageUrl = URL.createObjectURL(imageBlob);
-            // Almacenar los resultados en el estado
-            setFact(data.fact);
-            setImage(imageUrl);
-          })
-      })
+    getRandomFact().then(newFact => setFact(newFact))
   },[])
+
+  const { image } = useCatImage({fact})
+  
+  const handleClick = async () => {
+    const newFact = await getRandomFact(setFact)
+    setFact(newFact)
+  }
+
   return (
-    <div>
+    <div className="gatos">
       <h1>Facts De Gatos</h1>
+      <button onClick={handleClick}>Get New Fact</button>
       {fact && <p>{fact}</p>}
       {image && <img src={image} alt="Cat fact image" />}
     </div>
